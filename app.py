@@ -1,16 +1,25 @@
+
 import streamlit as st
+from PyPDF2 import PdfReader
 
-st.title("AI Document Chatbot 📄")
+st.title("AI Document Chatbot 📄🤖")
 
-uploaded_file = st.file_uploader("Upload a PDF", type="pdf")
+pdf = st.file_uploader("Upload your PDF", type="pdf")
 
-if uploaded_file:
-    text = uploaded_file.read().decode("latin-1", errors="ignore")
-    
-    st.subheader("Document Content Preview:")
+if pdf:
+    pdf_reader = PdfReader(pdf)
+    text = ""
+
+    for page in pdf_reader.pages:
+        text += page.extract_text()
+
+    st.subheader("Preview:")
     st.write(text[:1000])
 
-    query = st.text_input("Ask something about the document:")
+    query = st.text_input("Ask a question:")
 
     if query:
-        st.write("This is a basic demo response. Integrate OpenAI for real answers.")
+        if query.lower() in text.lower():
+            st.write("Answer found in document.")
+        else:
+            st.write("Basic demo: integrate AI for better answers.")
